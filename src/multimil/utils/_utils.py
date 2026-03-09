@@ -235,15 +235,18 @@ def save_predictions_in_adata(
     adata.uns[f"bag_true_{name}"] = create_df(bag_true, predictions)
     if clip == "clip":  # ordinal regression
         df_bag = create_df(bag_pred[idx], [name])
-        adata.uns[f"bag_full_predictions_{name}"] = np.clip(
+        adata.uns[f"bag_full_predictions_{name}"] = df_bag
+        adata.uns[f"bag_predicted_{name}"] = np.clip(
             np.round(df_bag.to_numpy()), a_min=0.0, a_max=len(class_names) - 1.0
         )
     elif clip == "argmax":  # classification
         df_bag = create_df(bag_pred[idx], class_names)
-        adata.uns[f"bag_full_predictions_{name}"] = df_bag.to_numpy().argmax(axis=1)
+        adata.uns[f"bag_full_predictions_{name}"] = df_bag
+        adata.uns[f"bag_predicted_{name}"] = df_bag.to_numpy().argmax(axis=1)
     else:  # regression
         df_bag = create_df(bag_pred[idx], [name])
-        adata.uns[f"bag_full_predictions_{name}"] = df_bag.to_numpy()
+        adata.uns[f"bag_full_predictions_{name}"] = df_bag
+        adata.uns[f"bag_predicted_{name}"] = df_bag.to_numpy()
 
 
 def plt_plot_losses(history, loss_names, save):
